@@ -92,3 +92,16 @@ dvc push -r local
 ```
 
 This will print a message `24972 files pushed`
+
+
+Now, suppose the data is lost via
+
+```
+rm -rf ./data/PetImages_split
+```
+
+Then, we can pull the data using 
+```
+dvc pull -r local
+```
+
