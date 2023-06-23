@@ -49,19 +49,23 @@ def infer(cfg: DictConfig) -> Tuple[dict, dict]:
     }
 
     log.info("Starting inference!")
-    vit_model = model.model
-    loaded_ckpt = torch.load(cfg.ckpt_path, map_location=torch.device('cpu'))
+    # vit_model = model.model
+    # loaded_ckpt = torch.load(cfg.ckpt_path, map_location=torch.device('cpu'))
 
-    my_model_kvpair=vit_model.state_dict()
-    for key,value in loaded_ckpt['state_dict'].items():
-        my_key = key[6:]
-        my_model_kvpair[my_key] = loaded_ckpt['state_dict'][key]
-    vit_model.load_state_dict(my_model_kvpair)
+    # my_model_kvpair=vit_model.state_dict()
+    # for key,value in loaded_ckpt['state_dict'].items():
+    #     my_key = key[6:]
+    #     my_model_kvpair[my_key] = loaded_ckpt['state_dict'][key]
+    # vit_model.load_state_dict(my_model_kvpair)
+
+    vit_model = model.load_from_checkpoint(cfg.ckpt_path)
     vit_model.eval()
+
+    device = torch.device('cuda' if cfg.trainer.accelerator=='gpu' else 'cpu')
 
     img = Image.open(cfg.img_path)
     img_tensor = transform(img)
-    img_tensor = img_tensor.unsqueeze(0)
+    img_tensor = img_tensor.unsqueeze(0).to(device)
 
     labels = ['cat', 'dog']
     with torch.no_grad():
